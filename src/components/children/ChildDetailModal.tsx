@@ -34,7 +34,7 @@ interface ChildDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   child: Child | null;
-  onEdit: (child: Child) => void;
+  onEdit?: (child: Child) => void;
 }
 
 export const ChildDetailModal: React.FC<ChildDetailModalProps> = ({
@@ -176,7 +176,7 @@ export const ChildDetailModal: React.FC<ChildDetailModalProps> = ({
                   variant="secondary"
                   size="sm"
                   icon={<Edit2 className="w-4 h-4" />}
-                  onClick={() => onEdit(child)}
+                  onClick={() => onEdit?.(child)}
                 >
                   Editar
                 </Button>

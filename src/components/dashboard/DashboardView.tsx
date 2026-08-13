@@ -11,9 +11,9 @@ import { formatCurrency } from '../../utils/formatters';
 import { Button } from '../common/Button';
 
 interface DashboardViewProps {
-  onOpenChildModal: () => void;
-  onOpenDonationModal: () => void;
-  onOpenTransactionModal: () => void;
+  onOpenChildModal?: () => void;
+  onOpenDonationModal?: () => void;
+  onOpenTransactionModal?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({

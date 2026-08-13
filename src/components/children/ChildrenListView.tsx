@@ -22,11 +22,13 @@ import { Button } from '../common/Button';
 import { Card } from '../common/Card';
 import { calculateAge, formatDateBR } from '../../utils/formatters';
 import { exportToCSV } from '../../utils/export';
+import { ChildDetailModal } from './ChildDetailModal';
+import { ChildFormModal } from './ChildFormModal';
 
 interface ChildrenListViewProps {
-  onSelectChild: (child: Child) => void;
-  onOpenCreateModal: () => void;
-  onEditChild: (child: Child) => void;
+  onSelectChild?: (child: Child) => void;
+  onOpenCreateModal?: () => void;
+  onEditChild?: (child: Child) => void;
 }
 
 export const ChildrenListView: React.FC<ChildrenListViewProps> = ({
@@ -41,6 +43,39 @@ export const ChildrenListView: React.FC<ChildrenListViewProps> = ({
   const [statusFilter, setStatusFilter] = useState<string>('todos');
   const [sexFilter, setSexFilter] = useState<string>('todos');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+
+  // Fallback local modal states
+  const [selectedChildForDetail, setSelectedChildForDetail] = useState<Child | null>(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [childToEdit, setChildToEdit] = useState<Child | null>(null);
+
+  const handleSelectChild = (child: Child) => {
+    if (onSelectChild) {
+      onSelectChild(child);
+    } else {
+      setSelectedChildForDetail(child);
+      setDetailModalOpen(true);
+    }
+  };
+
+  const handleOpenCreateModal = () => {
+    if (onOpenCreateModal) {
+      onOpenCreateModal();
+    } else {
+      setChildToEdit(null);
+      setFormModalOpen(true);
+    }
+  };
+
+  const handleEditChild = (child: Child) => {
+    if (onEditChild) {
+      onEditChild(child);
+    } else {
+      setChildToEdit(child);
+      setFormModalOpen(true);
+    }
+  };
 
   const filtered = childrenList.filter((child) => {
     const q = searchTerm.toLowerCase().trim();
@@ -116,7 +151,7 @@ export const ChildrenListView: React.FC<ChildrenListViewProps> = ({
           )}
 
           {permissions.canEditChildren && (
-            <Button variant="primary" size="sm" icon={<Plus className="w-4 h-4" />} onClick={onOpenCreateModal}>
+            <Button variant="primary" size="sm" icon={<Plus className="w-4 h-4" />} onClick={handleOpenCreateModal}>
               Cadastrar Acolhido
             </Button>
           )}
@@ -263,7 +298,7 @@ export const ChildrenListView: React.FC<ChildrenListViewProps> = ({
                     variant="primary"
                     size="sm"
                     icon={<Eye className="w-3.5 h-3.5" />}
-                    onClick={() => onSelectChild(child)}
+                    onClick={() => handleSelectChild(child)}
                   >
                     Prontuário Completo
                   </Button>
@@ -271,7 +306,7 @@ export const ChildrenListView: React.FC<ChildrenListViewProps> = ({
                   <div className="flex items-center gap-1">
                     {permissions.canEditChildren && (
                       <button
-                        onClick={() => onEditChild(child)}
+                        onClick={() => handleEditChild(child)}
                         className="p-1.5 text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                         title="Editar Acolhido"
                       >
@@ -322,7 +357,7 @@ export const ChildrenListView: React.FC<ChildrenListViewProps> = ({
                     <td className="p-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{formatDateBR(child.admissionDate)}</td>
                     <td className="p-3 font-mono text-slate-500 whitespace-nowrap">{child.judicialProcessNumber || 'S/N'}</td>
                     <td className="p-3 text-right whitespace-nowrap">
-                      <Button size="sm" variant="ghost" onClick={() => onSelectChild(child)}>
+                      <Button size="sm" variant="ghost" onClick={() => handleSelectChild(child)}>
                         Ver Prontuário
                       </Button>
                     </td>
@@ -333,6 +368,23 @@ export const ChildrenListView: React.FC<ChildrenListViewProps> = ({
           </div>
         </Card>
       )}
+
+      {/* Fallback Modals when rendered standalone */}
+      <ChildDetailModal
+        isOpen={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        child={selectedChildForDetail}
+        onEdit={(child) => {
+          setDetailModalOpen(false);
+          handleEditChild(child);
+        }}
+      />
+
+      <ChildFormModal
+        isOpen={formModalOpen}
+        onClose={() => setFormModalOpen(false)}
+        initialChild={childToEdit}
+      />
     </div>
   );
 };
