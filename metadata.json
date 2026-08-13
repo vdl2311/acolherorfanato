@@ -1,0 +1,6 @@
+{
+  "name": "Acolher - Gestão de Instituições de Acolhimento",
+  "description": "Sistema de gestão administrativa para orfanatos e casas de acolhimento infantojuvenil, abrangendo cadastro de acolhidos, histórico médico e educacional, doações, finanças, usuários com níveis de acesso e auditoria LGPD.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
